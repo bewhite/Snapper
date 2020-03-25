@@ -1,3 +1,5 @@
+﻿using System.Diagnostics;
+using System.IO;
 using Snapper.Core;
 
 namespace Snapper
@@ -32,6 +34,21 @@ namespace Snapper
         }
 
         /// <summary>
+        ///     **EXPERIMENTAL**
+        ///     <para>This method may be removed or changed in future versions.</para>
+        ///     <para></para>
+        ///     <para>
+        ///     Compares the provided object with the stored snapshot.
+        ///     It generates a snapshot Id relative to the current directory
+        ///     </para>
+        /// </summary>
+        /// <param name="snapshot">The object to compare with the stored snapshot</param>
+        public static void ShouldMatchRelativeSnapshot(this object snapshot)
+        {
+            snapshot.ShouldMatchSnapshot(GetRelativeSnapshotId());
+        }
+
+        /// <summary>
         ///     Compares the provided object with the stored child snapshot.
         ///     Takes in a unique child name, best used in theory tests.
         /// </summary>
@@ -53,6 +70,17 @@ namespace Snapper
         {
             var snapper = SnapperFactory.GetJsonInlineSnapper(expectedSnapshot);
             snapper.MatchSnapshot(snapshot);
+        }
+
+        private static SnapshotId GetRelativeSnapshotId()
+        {
+            var caller = new StackTrace().GetFrame(2).GetMethod();
+
+            return new SnapshotId(
+                Path.Combine(Directory.GetCurrentDirectory(), "_snapshots"),
+                caller.DeclaringType.Name,
+                caller.Name
+            );
         }
     }
 }
