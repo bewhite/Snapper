@@ -34,7 +34,7 @@ namespace Snapper.Json
 
         public void StoreSnapshot(SnapshotId snapshotId, object value)
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(snapshotId.FilePath));
+            Directory.CreateDirectory(Path.GetDirectoryName(snapshotId.RawFilePath));
 
             var newSnapshot = JObjectHelper.FromObject(value);
 
@@ -46,7 +46,7 @@ namespace Snapper.Json
             }
             else
             {
-                var rawSnapshotContent = GetRawSnapshotContent(snapshotId.FilePath);
+                var rawSnapshotContent = GetRawSnapshotContent(snapshotId.RawFilePath);
                 newSnapshotToWrite = rawSnapshotContent == null
                     ? new JObject()
                     : JObject.Parse(rawSnapshotContent);
@@ -65,7 +65,7 @@ namespace Snapper.Json
                 }
             }
 
-            File.WriteAllText(snapshotId.FilePath, newSnapshotToWrite.ToString());
+            File.WriteAllText(snapshotId.RawFilePath, newSnapshotToWrite.ToString());
         }
 
         private static string GetRawSnapshotContent(string filePath)

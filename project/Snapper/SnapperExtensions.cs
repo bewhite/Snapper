@@ -74,13 +74,20 @@ namespace Snapper
 
         private static SnapshotId GetRelativeSnapshotId()
         {
-            var caller = new StackTrace().GetFrame(2).GetMethod();
+            var frame = new StackTrace(true).GetFrame(2);
+            var filename = frame.GetFileName();
+            var caller = frame.GetMethod();
 
-            return new SnapshotId(
-                Path.Combine(Directory.GetCurrentDirectory(), "_snapshots"),
+            var snapshotId = new SnapshotId(
+                Path.Combine(Path.GetDirectoryName(filename), "_snapshots"),
                 caller.DeclaringType.Name,
                 caller.Name
-            );
+            )
+            {
+                ExecutionSnapshotPath = Path.Combine(Directory.GetCurrentDirectory(), "_snapshots")
+            };
+
+            return snapshotId;
         }
     }
 }

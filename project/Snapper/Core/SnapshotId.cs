@@ -4,7 +4,20 @@ namespace Snapper.Core
 {
     public class SnapshotId
     {
-        internal string FilePath { get; }
+        internal string RawFilePath { get; }
+
+        internal string ExecutionSnapshotPath { get; set; }
+
+        internal string FilePath {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(ExecutionSnapshotPath))
+                {
+                    return Path.Combine(ExecutionSnapshotPath, Path.GetFileName(RawFilePath));
+                }
+                return RawFilePath;
+            }
+        }
 
         internal string PrimaryId { get; }
 
@@ -27,13 +40,13 @@ namespace Snapper.Core
         {
             if (storeSnapshotsPerClass)
             {
-                FilePath = Path.Combine(snapshotDirectory, $"{className}.json");
+                RawFilePath = Path.Combine(snapshotDirectory, $"{className}.json");
                 PrimaryId = methodName;
                 SecondaryId = childSnapshotName;
             }
             else
             {
-                FilePath = Path.Combine(snapshotDirectory, $"{className}{'_'}{methodName}.json");
+                RawFilePath = Path.Combine(snapshotDirectory, $"{className}{'_'}{methodName}.json");
                 PrimaryId = childSnapshotName;
             }
         }
