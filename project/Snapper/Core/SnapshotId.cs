@@ -1,14 +1,16 @@
+﻿using System;
 using System.IO;
 
 namespace Snapper.Core
 {
     public class SnapshotId
     {
-        internal string RawFilePath { get; }
+        private string RawFilePath { get; }
 
         internal string ExecutionSnapshotPath { get; set; }
 
-        internal string FilePath {
+        internal string FilePath
+        {
             get
             {
                 if (!string.IsNullOrWhiteSpace(ExecutionSnapshotPath))
